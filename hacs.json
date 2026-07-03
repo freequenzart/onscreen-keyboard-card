@@ -1,6 +1,6 @@
 {
   "name": "OnScreen Keyboard",
   "filename": "onscreen-keyboard-card.js",
-  "homeassistant": "2026.5.4",
+  "homeassistant": "2026.3.0",
   "render_readme": true
 }
