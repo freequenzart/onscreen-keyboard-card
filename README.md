@@ -239,10 +239,22 @@ The keyboard automatically adapts to your active Home Assistant theme. It reads 
 | `--secondary-background-color` | Key background |
 | `--divider-color` | Key hover background |
 | `--primary-text-color` | Key text |
+| `--primary-text-color` | Key border |
 | `--primary-color` | Accent keys (Enter, active toggles) |
 | `--secondary-text-color` | Mode indicator text |
 
 If no theme variables are present, the original dark styling is used.
+
+### Examples
+
+**Home Assistant Light Theme**
+![Home Assistant Light Theme](screenshots/theme-home-assistant-light.png "Home Assistant Light Theme")
+
+**Home Assistant Dark Theme**
+![Home Assistant Dark Theme](screenshots/theme-home-assistant-dark.png "Home Assistant Dark Theme")
+
+**Google Dark Theme**
+![Google Dark Theme*](screenshots/theme-google-dark.png "Google Dark Theme*")
 
 ## Accessibility
 

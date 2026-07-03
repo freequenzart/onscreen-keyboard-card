@@ -518,6 +518,7 @@ class OnScreenKeyboardCard extends HTMLElement {
           --osk-key-bg: var(--secondary-background-color, #444);
           --osk-key-bg-hover: var(--divider-color, #555);
           --osk-key-color: var(--primary-text-color, #fff);
+          --osk-key-border-color: var(--primary-text-color, #fff);
           --osk-accent: var(--primary-color, #0a90ff);
           --osk-accent-color: var(--text-primary-color, #fff);
           --osk-indicator-color: var(--secondary-text-color, #aaa);
@@ -577,7 +578,7 @@ class OnScreenKeyboardCard extends HTMLElement {
         .key {
           min-width: 32px;
           height: 42px;
-          border: none;
+          border: 1px solid var(--osk-key-border-color);
           border-radius: 6px;
           background: var(--osk-key-bg);
           color: var(--osk-key-color);
