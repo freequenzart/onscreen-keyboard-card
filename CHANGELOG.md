@@ -5,6 +5,12 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-09-18
+
+### Added
+
+- **Large keys option** — enable `large_keys: true` to use larger, taller keyboard keys while preserving special key proportions.
+- **Visual editor** — a Large keys toggle is available in the card's GUI editor.
 
 ## [0.9.1] - 2026-07-03
 
@@ -47,5 +53,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shift and 123/ABC mode toggles, Backspace, Space, and Enter keys.
 - Support for text, search, email, URL, password, number, time, and textarea inputs.
 
+[0.10.0]: https://github.com/freequenzart/onscreen-keyboard-card/releases/tag/v0.10.0
 [0.9.0]: https://github.com/freequenzart/onscreen-keyboard-card/releases/tag/v0.9.0
 [0.8.3]: https://github.com/freequenzart/onscreen-keyboard-card/releases/tag/v0.8.3

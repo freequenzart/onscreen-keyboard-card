@@ -138,10 +138,12 @@ Configure these directly in the card YAML:
 | `layouts` | object | built-in | Override the `lowercase`, `uppercase`, and/or `symbols` layouts. See [Custom Layouts](#custom-layouts). |
 | `labels` | object | language-based | Override the mode-indicator text shown above the keys (`lowercase`, `uppercase`, `symbols`). See [Mode Labels](#mode-labels). |
 | `sticky_shift` | boolean | `false` | When `false`, Shift releases automatically after typing one letter (phone-style). Set to `true` to keep Shift active (caps-lock style) until tapped again. |
+| `large_keys` | boolean | `false` | Use larger keys with a minimum size of 44 x 44 px. |
 
 ```yaml
 type: custom:onscreen-keyboard-card
 sticky_shift: true
+large_keys: true
 ```
 
 A ✕ close button is shown in the keyboard header so the keyboard can be dismissed without pressing Enter.
@@ -227,7 +229,7 @@ layouts:
 
 ## Visual Editor
 
-The card provides a basic visual editor in the dashboard UI. When you add or edit the card without YAML mode, you get a **Sticky Shift** toggle. Advanced options (`layouts`, `labels`) remain YAML-only.
+The card provides a basic visual editor in the dashboard UI. When you add or edit the card without YAML mode, you get **Sticky Shift** and **Large keys** toggles. Advanced options (`layouts`, `labels`) remain YAML-only.
 
 ## Theming
 

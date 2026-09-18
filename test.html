@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>On-Screen Keyboard Test</title>
+  <style>
+    :root {
+      font-family: "Segoe UI", sans-serif;
+      color: #17211d;
+      background: #edf1e8;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 20px 280px;
+    }
+
+    main {
+      width: min(100%, 680px);
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+    }
+
+    .intro {
+      margin: 0 0 24px;
+      color: #536058;
+    }
+
+    section {
+      margin-bottom: 16px;
+      padding: 20px;
+      border: 1px solid #cad3c7;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      margin-top: 6px;
+      padding: 10px 12px;
+      border: 1px solid #849187;
+      border-radius: 4px;
+      font: inherit;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .option input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+    }
+
+    pre {
+      margin: 0;
+      padding: 12px;
+      overflow-x: auto;
+      border-radius: 4px;
+      background: #1f2b25;
+      color: #dce9df;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 20px 12px 320px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>On-Screen Keyboard Test</h1>
+    <p class="intro">Ein Eingabefeld antippen, um die Tastatur zu öffnen.</p>
+
+    <section>
+      <label>
+        Textfeld
+        <input type="text" placeholder="Hier testen">
+      </label>
+      <label>
+        Zahlenfeld
+        <input type="number" placeholder="123">
+      </label>
+    </section>
+
+    <section>
+      <label class="option">
+        <input id="sticky-shift" type="checkbox">
+        Sticky Shift
+      </label>
+      <label class="option">
+        <input id="large-keys" type="checkbox">
+        Große Tasten (mindestens 44 x 44 px)
+      </label>
+    </section>
+
+    <section>
+      <pre id="config-preview"></pre>
+    </section>
+  </main>
+
+  <onscreen-keyboard-card></onscreen-keyboard-card>
+
+  <script src="./onscreen-keyboard-card.js"></script>
+  <script>
+    const keyboard = document.querySelector('onscreen-keyboard-card');
+    const stickyShift = document.querySelector('#sticky-shift');
+    const largeKeys = document.querySelector('#large-keys');
+    const configPreview = document.querySelector('#config-preview');
+
+    function updateConfig() {
+      const config = {
+        sticky_shift: stickyShift.checked,
+        large_keys: largeKeys.checked
+      };
+      keyboard.setConfig(config);
+      configPreview.textContent = [
+        'type: custom:onscreen-keyboard-card',
+        `sticky_shift: ${config.sticky_shift}`,
+        `large_keys: ${config.large_keys}`
+      ].join('\n');
+    }
+
+    stickyShift.addEventListener('change', updateConfig);
+    largeKeys.addEventListener('change', updateConfig);
+    updateConfig();
+  </script>
+</body>
+</html>

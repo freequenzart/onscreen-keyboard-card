@@ -54,6 +54,7 @@ class OnScreenKeyboardCard extends HTMLElement {
     this._config = config || {};
     this.layouts = this._buildLayouts(this._config.layouts);
     this.stickyShift = this._config.sticky_shift === true;
+    this.largeKeys = this._config.large_keys === true;
     this._labels = this._buildLabels(this._config.labels);
     if (this.shadowRoot) {
       this.render();
@@ -592,6 +593,11 @@ class OnScreenKeyboardCard extends HTMLElement {
           flex: 1;
           max-width: 45px;
         }
+        :host([large-keys]) .key {
+          min-width: 44px;
+          height: 52px;
+          max-width: 60px;
+        }
         .key:hover {
           background: var(--osk-key-bg-hover);
         }
@@ -613,6 +619,9 @@ class OnScreenKeyboardCard extends HTMLElement {
           max-width: 60px;
           flex: 1.5;
         }
+        :host([large-keys]) .key.special {
+          max-width: 80px;
+        }
         .key.special.active {
           background: var(--osk-accent);
           color: var(--osk-accent-color);
@@ -621,11 +630,17 @@ class OnScreenKeyboardCard extends HTMLElement {
           flex: 6;
           max-width: 200px;
         }
+        :host([large-keys]) .key.space {
+          max-width: 264px;
+        }
         .key.enter {
           background: var(--osk-accent);
           color: var(--osk-accent-color);
           max-width: 80px;
           flex: 2;
+        }
+        :host([large-keys]) .key.enter {
+          max-width: 106px;
         }
         .key.enter:hover {
           background: var(--osk-accent);
@@ -667,6 +682,7 @@ class OnScreenKeyboardCard extends HTMLElement {
     }
 
     // Accessibility: expose the keyboard as a labelled group with a language hint.
+    this.toggleAttribute('large-keys', this.largeKeys);
     this.setAttribute('role', 'group');
     this.setAttribute('aria-label', this._getUiLabel('keyboard'));
     this.setAttribute('lang', this._currentLang());
@@ -754,14 +770,27 @@ class OnscreenKeyboardCardEditor extends HTMLElement {
             <input type="checkbox" id="sticky_shift">
             <span>Sticky Shift (keep Shift active after typing a letter)</span>
           </label>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="large_keys">
+            <span>Large keys (at least 44 x 44 px)</span>
+          </label>
           <p style="margin: 0; color: var(--secondary-text-color);">
             Advanced options (<code>layouts</code>, <code>labels</code>) can be configured in YAML. See the documentation.
           </p>
         </div>`;
       this._rendered = true;
       this._checkbox = this.querySelector('#sticky_shift');
+      this._largeKeysCheckbox = this.querySelector('#large_keys');
       this._checkbox.addEventListener('change', () => {
         this._config = { ...this._config, sticky_shift: this._checkbox.checked };
+        this.dispatchEvent(new CustomEvent('config-changed', {
+          detail: { config: this._config },
+          bubbles: true,
+          composed: true
+        }));
+      });
+      this._largeKeysCheckbox.addEventListener('change', () => {
+        this._config = { ...this._config, large_keys: this._largeKeysCheckbox.checked };
         this.dispatchEvent(new CustomEvent('config-changed', {
           detail: { config: this._config },
           bubbles: true,
@@ -771,6 +800,9 @@ class OnscreenKeyboardCardEditor extends HTMLElement {
     }
     if (this._checkbox) {
       this._checkbox.checked = this._config.sticky_shift === true;
+    }
+    if (this._largeKeysCheckbox) {
+      this._largeKeysCheckbox.checked = this._config.large_keys === true;
     }
   }
 
