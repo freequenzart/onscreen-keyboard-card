@@ -183,7 +183,7 @@ class OnScreenKeyboardCard extends HTMLElement {
     if (this.visible) return;
     const path = e.composedPath();
     for (const el of path) {
-      if (el === this || (this.shadowRoot && this.shadowRoot.contains(el))) return;
+      if (el === this || (el instanceof Node && this.shadowRoot.contains(el))) return;
       if (el instanceof HTMLInputElement && ['text', 'search', 'email', 'url', 'password', 'number', 'time', ''].includes(el.type)) {
         this.activeInput = el;
         this.showKeyboard();
@@ -230,6 +230,7 @@ class OnScreenKeyboardCard extends HTMLElement {
   }
 
   handleFocusIn(e) {
+    if (this._keyboard && e.composedPath().includes(this._keyboard)) return;
     const input = this._findInputInPath(e);
     if (input) {
       this.activeInput = input;
@@ -247,12 +248,12 @@ class OnScreenKeyboardCard extends HTMLElement {
     }
     // Don't hide if focus moved to the keyboard itself
     const related = e.relatedTarget;
-    if (related && this.shadowRoot?.contains(related)) {
+    if (related && (related === this._keyboard || this._keyboard?.shadowRoot.contains(related))) {
       return;
     }
     // Check composedPath for keyboard element
     const path = e.composedPath();
-    if (path.includes(this)) {
+    if (path.includes(this) || path.includes(this._keyboard)) {
       return;
     }
     // Delay to allow keyboard buttons to capture focus
@@ -270,9 +271,38 @@ class OnScreenKeyboardCard extends HTMLElement {
   }
 
   showKeyboard() {
-    if (this.visible) return;
+    let parent = this.activeInput;
+    while (parent) {
+      if (parent instanceof HTMLDialogElement && parent.matches(':modal')) break;
+      parent = parent.parentNode || parent.host;
+    }
+    if (this._modalDialog !== parent) {
+      if (this._modalDialog) {
+        this._modalDialog.removeEventListener('close', this._modalCloseHandler);
+      }
+      this._modalDialog = parent;
+      if (this._modalDialog) {
+        this._modalCloseHandler = () => this.hideKeyboard();
+        this._modalDialog.addEventListener('close', this._modalCloseHandler);
+      }
+    }
+    parent = parent || (this.activeInput.getRootNode() instanceof ShadowRoot
+      ? this.activeInput.getRootNode() : document.body);
+
+    if (!this._keyboard) {
+      this._keyboard = document.createElement('div');
+      this._keyboard.attachShadow({ mode: 'open' });
+      this._keyboard.setAttribute('popover', 'manual');
+    }
+    if (this._keyboard.parentNode !== parent) {
+      parent.appendChild(this._keyboard);
+    }
+    if (this.visible && (typeof this._keyboard.showPopover !== 'function' || this._keyboard.matches(':popover-open'))) return;
     this.visible = true;
     this.render();
+    if (typeof this._keyboard.showPopover === 'function' && !this._keyboard.matches(':popover-open')) {
+      this._keyboard.showPopover();
+    }
   }
 
   hideKeyboard() {
@@ -497,10 +527,18 @@ class OnScreenKeyboardCard extends HTMLElement {
   render() {
     if (!this.visible && !this.activeInput) {
       this.shadowRoot.innerHTML = '';
-      this.removeAttribute('role');
-      this.removeAttribute('aria-label');
+      if (this._modalDialog) {
+        this._modalDialog.removeEventListener('close', this._modalCloseHandler);
+        this._modalDialog = null;
+      }
+      if (this._keyboard) {
+        this._keyboard.remove();
+        this._keyboard = null;
+      }
       return;
     }
+
+    if (!this._keyboard) return;
 
     const layout = this.currentLayout;
     const modeLabel = this._getModeLabel();
@@ -512,7 +550,7 @@ class OnScreenKeyboardCard extends HTMLElement {
       </div>
     `).join('');
 
-    this.shadowRoot.innerHTML = `
+    this._keyboard.shadowRoot.innerHTML = `
       <style>
         :host {
           --osk-bg: var(--ha-card-background, var(--card-background-color, #2c2c2c));
@@ -525,11 +563,17 @@ class OnScreenKeyboardCard extends HTMLElement {
           --osk-indicator-color: var(--secondary-text-color, #aaa);
           display: block;
           position: fixed;
+          inset: auto 0 0;
           bottom: 0;
           left: 0;
           right: 0;
           z-index: 10000;
           background: var(--osk-bg);
+          box-sizing: border-box;
+          width: 100%;
+          max-width: none;
+          margin: 0;
+          border: 0;
           padding: 8px;
           box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
           font-family: var(--paper-font-body1_-_font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
@@ -655,7 +699,7 @@ class OnScreenKeyboardCard extends HTMLElement {
     `;
 
     // Attach event listeners
-    this.shadowRoot.querySelectorAll('.key').forEach(btn => {
+    this._keyboard.shadowRoot.querySelectorAll('.key').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -668,7 +712,7 @@ class OnScreenKeyboardCard extends HTMLElement {
       });
     });
 
-    const closeBtn = this.shadowRoot.querySelector('.kb-close');
+    const closeBtn = this._keyboard.shadowRoot.querySelector('.kb-close');
     if (closeBtn) {
       closeBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -682,10 +726,10 @@ class OnScreenKeyboardCard extends HTMLElement {
     }
 
     // Accessibility: expose the keyboard as a labelled group with a language hint.
-    this.toggleAttribute('large-keys', this.largeKeys);
-    this.setAttribute('role', 'group');
-    this.setAttribute('aria-label', this._getUiLabel('keyboard'));
-    this.setAttribute('lang', this._currentLang());
+    this._keyboard.toggleAttribute('large-keys', this.largeKeys);
+    this._keyboard.setAttribute('role', 'group');
+    this._keyboard.setAttribute('aria-label', this._getUiLabel('keyboard'));
+    this._keyboard.setAttribute('lang', this._currentLang());
   }
 
   renderKey(key, rowIndex) {

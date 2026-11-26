@@ -102,6 +102,17 @@
     </section>
 
     <section>
+      <button id="open-dialog" type="button">Dialog öffnen</button>
+      <dialog id="test-dialog">
+        <label>
+          Textfeld im Dialog
+          <input id="dialog-input" type="text" placeholder="Termin eingeben">
+        </label>
+        <button id="close-dialog" type="button">Dialog schließen</button>
+      </dialog>
+    </section>
+
+    <section>
       <label class="option">
         <input id="sticky-shift" type="checkbox">
         Sticky Shift
@@ -125,6 +136,10 @@
     const stickyShift = document.querySelector('#sticky-shift');
     const largeKeys = document.querySelector('#large-keys');
     const configPreview = document.querySelector('#config-preview');
+    const testDialog = document.querySelector('#test-dialog');
+
+    document.querySelector('#open-dialog').addEventListener('click', () => testDialog.showModal());
+    document.querySelector('#close-dialog').addEventListener('click', () => testDialog.close());
 
     function updateConfig() {
       const config = {

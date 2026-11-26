@@ -5,6 +5,7 @@ A simple on-screen keyboard custom card for Home Assistant that automatically ap
 ## Features
 
 - Automatically opens when clicking/focusing on any input field on a dashboard
+- Displays above dialogs using the browser's Popover API, including modal dialogs
 - Works with text, search, email, URL, password, number, and time input types
 - Traverses Shadow DOM boundaries (composedPath) to detect inputs inside HA custom elements (ha-textfield, search-input, etc.)
 - Supports German QWERTZ layout with lowercase (a-z), uppercase (A-Z), numbers (0-9)
@@ -75,6 +76,8 @@ To override the keyboard layouts, see [Custom Layouts](#custom-layouts).
 - Refresh your browser (hard reload / clear cache)
 - Click on any text input field on your dashboard
 - The keyboard should appear at the bottom of the screen
+
+For reliable display above dialogs, use a browser that supports the Popover API.
 
 ## Keyboard Layouts
 
